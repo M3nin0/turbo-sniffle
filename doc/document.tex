@@ -28,6 +28,8 @@
 
 \usepackage{listings}
 
+\lstset{language=sh}
+
 % Params
 % 1 - Escala da figura
 % 2 - Caminho absoluto para a figura
@@ -90,8 +92,6 @@ Seu objetivo neste trabalho é entregar uma configuração de cluster, com duas 
 
 \end{itemize}
 
-
-
 \chapter{Criação do cluster}
 
 Neste capítulo será descrito as etapas tomadas para a criação do cluster. 
@@ -149,6 +149,8 @@ Abaixo é demonstrado o arquivo de configuração da interface de rede.
 
 \includeImage{0.5}{imgs/2_configuracao_rede/gateway/1.png}{Configuração de rede - Gateway}
 
+O arquivo representado na imagem é o \textbf{/etc/network/interfaces}
+
 \subsubsection{Configuração do host}
 
 Diferente do \textit{gateway}, os \textit{hosts} terão apenas uma única interface, essa que será conectada com o \textit{gateway}.
@@ -172,14 +174,30 @@ A configuração seguida na interface dos hosts foi a seguinte
 
 \subsection{Configuração do quota}
 
+A \textbf{quota} é uma ferramenta que facilita o gerenciamento de espaços e limite para grupos e usuários. No tópico de instalação do sistema, foi mencionado que, o particionamento ser criado utilizando o \textbf{EXT3} foi feito por conta do quota, é importante citar este tópico pois, este é um pré-requisito para a utilização do pacote. Veja abaixo os passos utilizados na configuração do quota. 
+
+1° - Instalação do pacote
+
+\begin{lstlisting}
+apt install quota
+\end{lstlisting}
+
+Após realizar a instalação, será necessário definir quais partições farão a utilização do \textbf{quota}, para isso acesse \textbf{/etc/fstab}, dentro deste arquivo, insira nas opções da partição escolhida para o \textbf{quote} a opção \textbf{usrquota}, isso porque neste caso será feito o controle através de usuários. Aqui a partição escolhida foi a \textbf{/home}
+
+\includeImage{0.5}{imgs/3_configuracao_quota/1.png}{Arquivo de configuração de quota}
+
+As configurações de \textbf{quota} demonstradas acima, estão replicadas em todas as máquinas \textit{host} do cluster. 
+
 \subsection{Gerênciamento dos usuários}
 
 % SSH e compartilhamento de rede
 \subsection{Configuração dos serviços de rede}
 
 % Demonstrar o funcionamento
-\subsection{Testes}
+\section{Testes}
 
-\subsection{Conclusão}
+\section{Conclusão}
+
+
 
 \end{document}
