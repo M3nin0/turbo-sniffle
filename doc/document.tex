@@ -96,15 +96,15 @@ Seu objetivo neste trabalho é entregar uma configuração de cluster, com duas 
 
 Neste capítulo será descrito as etapas tomadas para a criação do cluster. 
 
-\subsection{Arquitetura}
+\section{Arquitetura}
 
 A arquitetura adotada para a solução dos problemas apresentados, seguirá o modelo cliente/servidor, e pode ser visualizada abaixo:
 
-\includeImage{0.5}{imgs/others/topologia.png}{Topologia do projeto}
+\includeImage{0.7}{imgs/others/topologia.png}{Topologia do projeto}
 
 Nas próximas seções serão apresentados os passos para a configuração desta arquitetura. É importante lembrar que, os passos estão na mesma sequência em que as configurações foram realizadas.
 
-\subsection{Instalação do sistema operacional}
+\section{Instalação do sistema operacional}
 
 O primeiro passo para a configuração do \textbf{cluster} será a instalação do sistema operacional. Nesta etapa foi realizada a divisão das partições para a utilização separada dos diretórios \textbf{/home}, com até 100 MB de espaço e o \textbf{/var} com até 3GB de espaço livre.
 
@@ -124,11 +124,11 @@ A etapa abaixo, demonstra as partições criadas anteriormente.
 
 Após realizar os passos demonstrados acima, a parte de instalação do sistema operacional foi realizada.
 
-\subsection{Configuração das interfaces de rede}
+\section{Configuração das interfaces de rede}
 
 Nesta etapa será realizado as interfaces de rede, no \textit{gateway} e no \textit{host}.
 
-\subsubsection{Configuração do gateway}
+\subsection{Configuração do gateway}
 
 No caso do \textit{gateway}, ele terá duas interfaces de rede, uma para realizar a comunicação com a rede externa (\textit{internet}) e outra para a comunicação interna, entre as máquinas do cluster.
 
@@ -151,7 +151,7 @@ Abaixo é demonstrado o arquivo de configuração da interface de rede.
 
 O arquivo representado na imagem é o \textbf{/etc/network/interfaces}
 
-\subsubsection{Configuração do host}
+\subsection{Configuração do host}
 
 Diferente do \textit{gateway}, os \textit{hosts} terão apenas uma única interface, essa que será conectada com o \textit{gateway}.
 
@@ -172,9 +172,9 @@ A configuração seguida na interface dos hosts foi a seguinte
 \includeImage{0.5}{imgs/2_configuracao_rede/host/1_host_1.png}{Configuração de rede - Host 1}
 \includeImage{0.5}{imgs/2_configuracao_rede/host/1_host_2.png}{Configuração de rede - Host 2}
 
-\subsection{Configuração do quota}
+\section{Configuração do quota}
 
-A \textbf{quota} é uma ferramenta que facilita o gerenciamento de espaços e limite para grupos e usuários. No tópico de instalação do sistema, foi mencionado que, o particionamento ser criado utilizando o \textbf{EXT3} foi feito por conta do quota, é importante citar este tópico pois, este é um pré-requisito para a utilização do pacote. Veja abaixo os passos utilizados na configuração do quota. 
+A \textbf{quota} é uma ferramenta que facilita o gerenciamento de espaços e limite para grupos e usuários. No tópico de instalação do sistema, foi mencionado que o particionamento será criado utilizando o \textbf{EXT3} foi feito por conta do quota, é importante citar este tópico pois, este é um pré-requisito para a utilização do pacote. Veja abaixo os passos utilizados na configuração do quota. 
 
 1° - Instalação do pacote
 
@@ -182,22 +182,78 @@ A \textbf{quota} é uma ferramenta que facilita o gerenciamento de espaços e li
 apt install quota
 \end{lstlisting}
 
-Após realizar a instalação, será necessário definir quais partições farão a utilização do \textbf{quota}, para isso acesse \textbf{/etc/fstab}, dentro deste arquivo, insira nas opções da partição escolhida para o \textbf{quote} a opção \textbf{usrquota}, isso porque neste caso será feito o controle através de usuários. Aqui a partição escolhida foi a \textbf{/home}
+Após realizar a instalação, será necessário definir quais partições farão a utilização do \textbf{quota}, para isso é feito o acesso a \textbf{/etc/fstab}, dentro deste arquivo, é inserido nas opções da partição escolhida a opção \textbf{usrquota}, isso porque neste caso será feito o controle através de usuários. Aqui a partição escolhida foi a \textbf{/home}.
 
 \includeImage{0.5}{imgs/3_configuracao_quota/1.png}{Arquivo de configuração de quota}
 
 As configurações de \textbf{quota} demonstradas acima, estão replicadas em todas as máquinas \textit{host} do cluster. 
 
-\subsection{Gerênciamento dos usuários}
+% Nesta parte será adicionado as configurações de usuários e grupos
+\section{Gerenciamento dos usuários}
 
 % SSH e compartilhamento de rede
-\subsection{Configuração dos serviços de rede}
+\section{Configuração dos serviços de rede}
 
+Neste etapa, será demonstrado o processo de configuração dos serviços de rede que irão permitir a comunicação entre as máquinas do cluster. Serão instalados e configurados o \textbf{SSH} e o compartilhamento de rede utilizando o \textbf{IPTABLES}.
+
+\subsection{Configuração do SSH no Gateway}
+
+A configuração do \textbf{ssh} no \textit{gateway} será realizada para que ele aceite conexões na porta \textbf{5678}. O primeiro passo será a instalação do pacote \textbf{ssh}.
+
+\begin{lstlisting}
+apt install ssh
+\end{lstlisting}
+
+Após a instalação do pacote, será necessário realizar o acesso ao arquivo de configuração do \textbf{ssh}, este que fica no diretório \textbf{/etc/ssh/sshd\char`_config}, dentro deste arquivo será alterado os argumentos \textbf{Port} e \textbf{PermitRootLogin}, como demonstrado abaixo 
+
+\includeImage{0.7}{imgs/4_configuracao_servicos_rede/1_gateway_1.png}{Configuração de SSH - Gateway}
+
+Depois de configurado, o acesso não será permitido para o usuário \textbf{root} e a conexão \textbf{ssh} para o \textbf{gateway} só poderá ser realizada na porta \textbf{5678}.
+
+\subsection{Configuração do SSH no Host}
+
+Da mesma forma que demonstrado no tópico anterior, o pacote \textbf{ssh} deverá estar instalado.
+
+Com o pacote instalado será necessário acessar o arquivo \textbf{/etc/ssh/sshd\char`_config}, e modificar apenas a linha de permissão de acesso do \textbf{root}. 
+
+Ao realizar a configuração a linha a ser alterada ficará como demonstrado abaixo:
+\includeImage{0.5}{imgs/4_configuracao_servicos_rede/1_host_1.png}{Configuração de SSH - Host}
+
+As máquinas \textbf{host} terão ainda uma opção para negar o acesso de todos os pedidos de conexão \textbf{ssh} que não venham de máquinas do cluster. Esta configuração será realizada no arquivo \textbf{/etc/hosts.allow}.
+
+Dentro deste arquivo será declarado que qualquer conexão \textbf{ssh} que tenha origem diferente do endereço \textbf{10.20.30.0}, deverá ser recusada. Abaixo há o arquivo já com as definições feitas.
+
+\includeImage{0.5}{imgs/4_configuracao_servicos_rede/1_host_2.png}{Bloqueio de acesso externo ao cluster}
+
+
+É importante lembrar que todas essa configurações foram feitas nas duas máquinas \textbf{host} presentes no cluster.
+
+
+\subsection{Configuração do compartilhamento de rede}
+
+Para finalizar o processo de configuração dos serviços de rede, será realizado o compartilhamento dos serviços de \textit{internet} do \textbf{gateway} e os \textbf{hosts}.
+
+O processo de configuração do compartilhamento do compartilhamento de rede pode ser visualizado abaixo
+
+\begin{lstlisting}
+sysctl -w net.ipv4.ip_forward=1
+sysctl -p 
+iptables -X
+iptables -F
+iptables -t nat -X
+iptables -t nat -F 
+iptables -I INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT 
+iptables -t nat -I POSTROUTING -o enp0s3 -j MA
+\end{lstlisting} 
+
+Ao final da execução das linhas demonstradas acima, os \textbf{hosts} terão acesso aos serviços de \textit{internet} fornecidos pelo \textbf{gateway}.
+ 
 % Demonstrar o funcionamento
 \section{Testes}
 
-\section{Conclusão}
 
+\chapter{Conclusão}
 
 
 \end{document}
