@@ -18,7 +18,7 @@
 \usepackage{lipsum}
 \usepackage{cmap}
 \usepackage{graphicx}
-\usepackage[brazilian,hyperpageref]{backref}
+\usepackage[brazilian, hyperpageref]{backref}
 \usepackage[alf]{abntex2cite} % Citações padrão ABNT
 \usepackage{rotating}
 \usepackage{float}
@@ -28,13 +28,18 @@
 
 \usepackage{listings}
 
-\newcommand{\imagem}[3]{
-	\begin{figure}[htb]
-		\begin{center}
-			\includegraphics[scale=0.5]{#1}
-		\end{center}
-		\caption{#2}	%\label{#3}
-	\end{figure}
+% Params
+% 1 - Escala da figura
+% 2 - Caminho absoluto para a figura
+% 3 - Legenda da figura
+\newcommand{\includeImage}[3] {
+
+\begin{figure}[H]
+ 	 \centering
+  		\includegraphics[scale=#1]{#2}
+  	\caption{#3}
+\end{figure}
+
 }
 
 \title{Sistemas operacionais II \\ Trabalho 1 - Cluster de máquinas}
@@ -56,41 +61,123 @@ Linux é um termo utilizado para se referir a sistemas operacionais que utilizem
 
 Seu objetivo neste trabalho é entregar uma configuração de cluster, com duas máquinas no mínimo, instaladas e configuradas de acordo com os seguintes requisitos:
 
-- Sistema operacional: Debian
-    - Sem interface gráfica.
-    - Partições separadas para o /home e /var. /home com no máximo 100mb e /var com 3gb. O formato das partições será o EXT3.
+\begin{itemize}
+	\item Sistema operacional: Debian
+	\begin{itemize}
+		\item Sem interface gráfica;
+		\item Partições separadas para o /home e /var. /home com no máximo 100mb e /var com 3gb. O formato das partições será o EXT3
+	\end{itemize}
 
-- As máquinas deverão estar na mesma rede. Mesma máscara de rede e faixa de
-IP.
+	\item As máquinas deverão estar na mesma rede. Mesma máscara de rede e faixa de IP.
 
-- A comunicação entre elas deverá ser habilitada por ssh e não deve ser permitido a uma máquina realizar conexão remota com outra que não pertença ao cluster, exceto o gateway. O acesso ao cluster por máquinas externas deverá ser habilitado, e por isso o gateway deverá ter duas interfaces de redes, uma para comunicação interna e outra para comunicação externa.
+	\item A comunicação entre elas deverá ser habilitada por ssh e não deve ser permitido a uma máquina realizar conexão remota com outra que não pertença ao cluster, exceto o gateway. O acesso ao cluster por máquinas externas deverá ser habilitado, e por isso o gateway deverá ter duas interfaces de redes, uma para comunicação interna e outra para comunicação externa.
 
-- Deverá existir uma máquina gateway e ela irá fornecer acesso, as outras máquinas, à Internet e a conexão remota externa, ou seja, alguém poderá realizar ssh para o gateway e a partir daí acessar as máquinas do cluster.
+	\item Deverá existir uma máquina gateway e ela irá fornecer acesso, as outras máquinas, à Internet e a conexão remota externa, ou seja, alguém poderá realizar ssh para o gateway e a partir daí acessar as máquinas do cluster.
 
-- Não será permitido ssh como root direto. E o usuário administrador não deverá ter acesso a senha do usuário root.
+	\item Não será permitido ssh como root direto. E o usuário administrador não deverá ter acesso a senha do usuário root.
 
-- Os usuários do cluster deverão ter contas em cada máquina e serão pelo menos 3 usuários. Sendo que deve existir um usuário administrador responsável por gerenciar os demais. Este administrador será o único com acesso a poderes de root em todas as máquinas. Cada usuário deverá ter uma quota em disco de no máximo 50mb, para isso será necessário estudar o funcionamento do pacote quota.
+	\item Os usuários do cluster deverão ter contas em cada máquina e serão pelo menos 3 usuários. Sendo que deve existir um usuário administrador responsável por gerenciar os demais. Este administrador será o único com acesso a poderes de root em todas as máquinas. Cada usuário deverá ter uma quota em disco de no máximo 50mb, para isso será necessário estudar o funcionamento do pacote quota.
 
-- Os sistemas deverão ter os seguintes grupos:
-    - Arquivadores: Usuários responsáveis pelo gerenciamento de arquivos.
-    - Agendadores: Usuários responsáveis pelo agendamento de tarefas.
+	\item Os sistemas deverão ter os seguintes grupos:
+		\begin{itemize}
+			\item Arquivadores: Usuários responsáveis pelo gerenciamento de arquivos
+			\item Agendadores: Usuários responsáveis pelo agendamento de tarefas
+		\end{itemize}		    	
+    	
+	\item O usuário administrador deverá distribuir os demais nos grupos.
 
-- O usuário administrador deverá distribuir os demais nos grupos.
+	\item Para cada grupo deverá ser criado uma pasta no /var. O acesso deverá ser restrito ao grupo, ou seja, usuários que não sejam dos grupos supracitados não poderão acessar o conteúdo das pastas.
 
-- Para cada grupo deverá ser criado uma pasta no /var. O acesso deverá ser restrito ao grupo, ou seja, usuários que não sejam dos grupos supracitados não poderão acessar o conteúdo das pastas.
+\end{itemize}
+
+
 
 \chapter{Criação do cluster}
 
+Neste capítulo será descrito as etapas tomadas para a criação do cluster. 
+
+\subsection{Arquitetura}
+
+A arquitetura adotada para a solução dos problemas apresentados, seguirá o modelo cliente/servidor, e pode ser visualizada abaixo:
+
+\includeImage{0.5}{imgs/others/topologia.png}{Topologia do projeto}
+
+Nas próximas seções serão apresentados os passos para a configuração desta arquitetura. É importante lembrar que, os passos estão na mesma sequência em que as configurações foram realizadas.
+
 \subsection{Instalação do sistema operacional}
 
+O primeiro passo para a configuração do \textbf{cluster} será a instalação do sistema operacional. Nesta etapa foi realizada a divisão das partições para a utilização separada dos diretórios \textbf{/home}, com até 100 MB de espaço e o \textbf{/var} com até 3GB de espaço livre.
+
+Veja abaixo os passos da instalação.
+
+\includeImage{0.5}{imgs/1_instalacao/1.png}{Tela inicial de instalação}
+
+Na imagem que segue, é realizada a configuração das partições, essas foram configuradas utilizando o \textbf{EXT3}, para que em um passo futuro a configuração do pacote \textbf{quotes}, seja realizada sem problemas.
+\includeImage{0.5}{imgs/1_instalacao/2.png}{Configuração das partições}
+
+O sistema instalado tem apenas os serviços básicos
+\includeImage{0.5}{imgs/1_instalacao/3.png}{Definições dos serviços/\textit{softwares} padrão}
+
+A etapa abaixo, demonstra as partições criadas anteriormente.
+\includeImage{0.5}{imgs/1_instalacao/4.png}{Confirmação da separação das partições}
+
+
+Após realizar os passos demonstrados acima, a parte de instalação do sistema operacional foi realizada.
+
 \subsection{Configuração das interfaces de rede}
+
+Nesta etapa será realizado as interfaces de rede, no \textit{gateway} e no \textit{host}.
+
+\subsubsection{Configuração do gateway}
+
+No caso do \textit{gateway}, ele terá duas interfaces de rede, uma para realizar a comunicação com a rede externa (\textit{internet}) e outra para a comunicação interna, entre as máquinas do cluster.
+
+As interfaces do gateway são:
+\begin{itemize}
+	\item \textbf{enp0s3} - Rede externa
+		\begin{itemize}
+			\item IP: Dinâmico
+		\end{itemize}
+	\item \textbf{enp0s8} - Rede interna
+		\begin{itemize}
+			\item IP: 10.20.30.1
+			\item Rede: 255.255.255.0 (/24)
+		\end{itemize}
+\end{itemize}
+
+Abaixo é demonstrado o arquivo de configuração da interface de rede.
+
+\includeImage{0.5}{imgs/2_configuracao_rede/gateway/1.png}{Configuração de rede - Gateway}
+
+\subsubsection{Configuração do host}
+
+Diferente do \textit{gateway}, os \textit{hosts} terão apenas uma única interface, essa que será conectada com o \textit{gateway}.
+
+A configuração seguida na interface dos hosts foi a seguinte
+\begin{itemize}
+	\item Host 1
+		\begin{itemize}
+			\item IP: 10.20.30.2
+			\item Rede: 255.255.255.0 (/24)
+		\end{itemize}
+	\item Host 2
+		\begin{itemize}
+			\item IP: 10.20.30.3
+			\item Rede: 255.255.255.0 (/24)
+		\end{itemize}
+\end{itemize}
+
+\includeImage{0.5}{imgs/2_configuracao_rede/host/1_host_1.png}{Configuração de rede - Host 1}
+\includeImage{0.5}{imgs/2_configuracao_rede/host/1_host_2.png}{Configuração de rede - Host 2}
 
 \subsection{Configuração do quota}
 
 \subsection{Gerênciamento dos usuários}
 
+% SSH e compartilhamento de rede
 \subsection{Configuração dos serviços de rede}
 
+% Demonstrar o funcionamento
 \subsection{Testes}
 
 \subsection{Conclusão}
