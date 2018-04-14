@@ -30,6 +30,9 @@
 
 \lstset{language=sh}
 
+\newcommand{\colcheted}{] }
+\newcommand{\colchetee}{[}
+
 % Params
 % 1 - Escala da figura
 % 2 - Caminho absoluto para a figura
@@ -189,7 +192,81 @@ Após realizar a instalação, será necessário definir quais partições farã
 As configurações de \textbf{quota} demonstradas acima, estão replicadas em todas as máquinas \textit{host} do cluster. 
 
 % Nesta parte será adicionado as configurações de usuários e grupos
-\section{Gerenciamento dos usuários}
+\section{Gerenciamento dos usuários e grupos}
+
+Neste capítulo todo o gerenciamento de grupos e usuários é abordado. Três usuários foram adicionados para atender os requisitos citados na contextualização:
+
+%Lista ordenada
+\begin{itemize}
+	\item Usuário administrador com privilégios de root para genrenciar todos os usuários
+	\item Administrador para o grupo Arquivadores 
+	\item Administrador para o grupo Agendadores
+\end{itemize}
+
+\subsection {Adicionar usuários ao sistema}
+O comando utilizado para adicionar os usuários "admin", "agendador" e "arquivador", foi o \# adduser conforme exemplo abaixo:
+
+\includeImage{0.7}{imgs/5_gerenciamento_grupos/adduser_exemplo.png}{Adicionando usuários com \#adduser}
+
+
+\subsection{Configuração usuário admin}
+Para conceder privilégios de root ao usuário \textbf{adimin} foi utilizado o pacote \textbf{sudo}, este pacote eleva a permissão de usuários comuns, para que possam executar tarefas de administradores quando necessário, digitando \textbf{sudo}, antes de comandos que são autorizados apenas para o root. Para realizar a instalação do pacote sudo o comando \# apt-get install sudo foi executado:
+
+\includeImage{0.7}{imgs/5_gerenciamento_grupos/instalando_sudo.png}{Instalação do pacote sudo}
+
+As permissões de administrador para usuários comuns, são configuradas no arquivo sudoers localizado em \textbf{/etc/sudoers}, preferencialmente utilizando o comando \textbf{visudo}, os parâmetros definidos são:
+
+\begin{itemize}
+	\item Máquinas em que os comandos poderão ser executados
+	\item Usuários que poderão executar os comandos
+	\item Comandos permitidos
+\end{itemize}
+
+Na imagem abaixo as permissões do usuário admin são configuradas:
+
+\includeImage{0.7}{imgs/5_gerenciamento_grupos/adicionando_permissoes_de_root_para_usuario_admin.png}{Configuração do arquivo sudoers}
+
+Após esta configuração o usuário admin conseguirá executar comandos root.
+
+\subsection{Criação e configuração dos diretórios}
+
+Os diretórios e grupos \textbf{arquivadores} e \textbf{agendadores} foram criados para atender os dois últimos requisitos deste capítulo:
+
+\includeImage{0.7}{imgs/5_gerenciamento_grupos/diretorios_grupos_arquivadores_agendadores.png}{Grupos e Diretórios para os agendadores e arquivadores}
+
+Os diretórios arquivadores e agendadores foram alterados de grupo, para seus respectivos administradores com o comando \textbf{chgrp agendadores agendadores\textbackslash} e \textbf{chgrp arquivadores arquivadores\textbackslash}, seguindo esta sintaxe chgrp \colchetee grupo\colcheted \colchetee diretório\colcheted conforme imagem abaixo:
+
+\includeImage{0.7}{imgs/5_gerenciamento_grupos/alteracao_de_grupo_dos_diretorios.png}{Alteração de grupo dos diretórios agendadores - arquivadores}
+
+Todas as permissões de execução, leitura e escrita foram removidas dos outros e do dono utilizando o comando \textbf{chmod} para que apenas usuários que pertencerem aos grupos agendadores e/ou arquivadores possam realizar operações nos diretórios:
+
+\includeImage{0.7}{imgs/5_gerenciamento_grupos/permissao_restringida_apenas_para_os_grupos.png}{Permissores - diretórios agendadores e arquivadores}
+
+\begin{table}[h]
+\caption{Permissoes}
+\centering
+\begin{tabular}{r|lr}
+\cline{1-3}
+\multicolumn{1}{|l|}{Usuário} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{- - -} \\ 
+\cline{1-3}
+\multicolumn{1}{|l|}{Grupo} & \multicolumn{1}{l|}{7} & \multicolumn{1}{l|}{rwx} \\ 
+\cline{1-3}
+\multicolumn{1}{|l|}{Outros} & \multicolumn{1}{l|}{0} & \multicolumn{1}{l|}{- - -} \\ 
+\cline{1-3}
+\end{tabular}
+\end{table}
+
+\subsection{Configuração dos grupos}
+
+Os usuários agendador e arquivador, foram adiciondos em seus grupos agendadores e arquivadores, respectivamente:
+
+\includeImage{0.7}{imgs/5_gerenciamento_grupos/adicionando_usuarios_aos_grupos.png}{Incluindo usuários a seus grupos}
+
+Os mesmos foram definidos como administradores de seu grupo para que realizem o gerenciamento de usuários com o comando \textbf{gpasswd}:
+
+\includeImage{0.7}{imgs/5_gerenciamento_grupos/definindo_administrador_dos_grupos.png}{Definição de usuários administradores}
+
+Desta forma toda a administração dos grupos pode ser feita por usuários sem elevação de root.
 
 % SSH e compartilhamento de rede
 \section{Configuração dos serviços de rede}
@@ -252,6 +329,15 @@ Ao final da execução das linhas demonstradas acima, os \textbf{hosts} terão a
 % Demonstrar o funcionamento
 \section{Testes}
 
+As configurações realizadas nos capítulos anteriores serão evidenciados neste, para exemplicar como o projeto funciona na prática.
+
+\subsection{Grupos}
+
+Teste de administração de grupo:
+
+\includeImage{0.8}{imgs/5_gerenciamento_grupos/permissao_restringida_apenas_para_os_grupos.png}{Gerenciamento de grupos}
+
+Neste exemplo o usuário user é adicionado ao grupo agendadores pelo usuário agendador. Um arquivo é criado por user e removido para testes de leitura escrita e execução. Após isso o mesmo é removido do grupo agendadores e não consegue mais realizar acesso ao diretório agendadores.
 
 \chapter{Conclusão}
 
