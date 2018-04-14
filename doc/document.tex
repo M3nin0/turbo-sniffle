@@ -175,22 +175,6 @@ A configuração seguida na interface dos hosts foi a seguinte
 \includeImage{0.5}{imgs/2_configuracao_rede/host/1_host_1.png}{Configuração de rede - Host 1}
 \includeImage{0.5}{imgs/2_configuracao_rede/host/1_host_2.png}{Configuração de rede - Host 2}
 
-\section{Configuração do quota}
-
-A \textbf{quota} é uma ferramenta que facilita o gerenciamento de espaços e limite para grupos e usuários. No tópico de instalação do sistema, foi mencionado que o particionamento será criado utilizando o \textbf{EXT3} foi feito por conta do quota, é importante citar este tópico pois, este é um pré-requisito para a utilização do pacote. Veja abaixo os passos utilizados na configuração do quota. 
-
-1° - Instalação do pacote
-
-\begin{lstlisting}
-apt install quota
-\end{lstlisting}
-
-Após realizar a instalação, será necessário definir quais partições farão a utilização do \textbf{quota}, para isso é feito o acesso a \textbf{/etc/fstab}, dentro deste arquivo, é inserido nas opções da partição escolhida a opção \textbf{usrquota}, isso porque neste caso será feito o controle através de usuários. Aqui a partição escolhida foi a \textbf{/home}.
-
-\includeImage{0.5}{imgs/3_configuracao_quota/1.png}{Arquivo de configuração de quota}
-
-As configurações de \textbf{quota} demonstradas acima, estão replicadas em todas as máquinas \textit{host} do cluster. 
-
 % Nesta parte será adicionado as configurações de usuários e grupos
 \section{Gerenciamento dos usuários e grupos}
 
@@ -198,28 +182,32 @@ Neste capítulo todo o gerenciamento de grupos e usuários é abordado. Três us
 
 %Lista ordenada
 \begin{itemize}
-	\item Usuário administrador com privilégios de root para genrenciar todos os usuários
-	\item Administrador para o grupo Arquivadores 
-	\item Administrador para o grupo Agendadores
+	\item Usuário administrador com privilégios de \textbf{root} para gerenciar todos os usuários;
+	\item Administrador para o grupo Arquivadores;
+	\item Administrador para o grupo Agendadores;
 \end{itemize}
 
 \subsection {Adicionar usuários ao sistema}
-O comando utilizado para adicionar os usuários "admin", "agendador" e "arquivador", foi o \# adduser conforme exemplo abaixo:
+O comando utilizado para adicionar os usuários "admin", "agendador" e "arquivador", foi o \textbf{adduser} conforme exemplo abaixo:
 
-\includeImage{0.7}{imgs/5_gerenciamento_grupos/adduser_exemplo.png}{Adicionando usuários com \#adduser}
+\includeImage{0.7}{imgs/5_gerenciamento_grupos/adduser_exemplo.png}{Adicionando usuários com adduser}
 
 
 \subsection{Configuração usuário admin}
-Para conceder privilégios de root ao usuário \textbf{adimin} foi utilizado o pacote \textbf{sudo}, este pacote eleva a permissão de usuários comuns, para que possam executar tarefas de administradores quando necessário, digitando \textbf{sudo}, antes de comandos que são autorizados apenas para o root. Para realizar a instalação do pacote sudo o comando \# apt-get install sudo foi executado:
+Para conceder privilégios de \textbf{root} ao usuário \textbf{admin} foi utilizado o pacote \textbf{sudo}, este pacote eleva a permissão de usuários comuns, para que possam executar tarefas de administradores quando necessário, digitando \textbf{sudo}, antes de comandos que são autorizados apenas para o root. Para realizar a instalação do pacote use:
+
+\begin{lstlisting}
+# apt-get install sudo
+\end{lstlisting}
 
 \includeImage{0.7}{imgs/5_gerenciamento_grupos/instalando_sudo.png}{Instalação do pacote sudo}
 
-As permissões de administrador para usuários comuns, são configuradas no arquivo sudoers localizado em \textbf{/etc/sudoers}, preferencialmente utilizando o comando \textbf{visudo}, os parâmetros definidos são:
+As permissões de administrador para usuários comuns, são configuradas no arquivo \textbf{sudoers} localizado em \textbf{/etc/sudoers}, preferencialmente utilizando o comando \textbf{visudo}, os parâmetros definidos são:
 
 \begin{itemize}
-	\item Máquinas em que os comandos poderão ser executados
-	\item Usuários que poderão executar os comandos
-	\item Comandos permitidos
+	\item Máquinas em que os comandos poderão ser executados;
+	\item Usuários que poderão executar os comandos;
+	\item Comandos permitidos.
 \end{itemize}
 
 Na imagem abaixo as permissões do usuário admin são configuradas:
@@ -234,16 +222,16 @@ Os diretórios e grupos \textbf{arquivadores} e \textbf{agendadores} foram criad
 
 \includeImage{0.7}{imgs/5_gerenciamento_grupos/diretorios_grupos_arquivadores_agendadores.png}{Grupos e Diretórios para os agendadores e arquivadores}
 
-Os diretórios arquivadores e agendadores foram alterados de grupo, para seus respectivos administradores com o comando \textbf{chgrp agendadores agendadores\textbackslash} e \textbf{chgrp arquivadores arquivadores\textbackslash}, seguindo esta sintaxe chgrp \colchetee grupo\colcheted \colchetee diretório\colcheted conforme imagem abaixo:
+Os diretórios \textbf{arquivadores} e \textbf{agendadores} foram alterados de grupo, para seus respectivos administradores com o comando \textbf{chgrp agendadores agendadores\textbackslash} e \textbf{chgrp arquivadores arquivadores\textbackslash}, seguindo esta sintaxe chgrp \colchetee grupo\colcheted \colchetee diretório\colcheted conforme imagem abaixo:
 
 \includeImage{0.7}{imgs/5_gerenciamento_grupos/alteracao_de_grupo_dos_diretorios.png}{Alteração de grupo dos diretórios agendadores - arquivadores}
 
 Todas as permissões de execução, leitura e escrita foram removidas dos outros e do dono utilizando o comando \textbf{chmod} para que apenas usuários que pertencerem aos grupos agendadores e/ou arquivadores possam realizar operações nos diretórios:
 
-\includeImage{0.7}{imgs/5_gerenciamento_grupos/permissao_restringida_apenas_para_os_grupos.png}{Permissores - diretórios agendadores e arquivadores}
+\includeImage{0.7}{imgs/5_gerenciamento_grupos/permissao_restringida_apenas_para_os_grupos.png}{Permissões - diretórios agendadores e arquivadores}
 
 \begin{table}[h]
-\caption{Permissoes}
+\caption{Permissões}
 \centering
 \begin{tabular}{r|lr}
 \cline{1-3}
@@ -268,6 +256,82 @@ Os mesmos foram definidos como administradores de seu grupo para que realizem o 
 
 Desta forma toda a administração dos grupos pode ser feita por usuários sem elevação de root.
 
+\section{Configuração do quota}
+
+A \textbf{quota} é uma ferramenta que facilita o gerenciamento de espaços e limite para grupos e usuários. No tópico de instalação do sistema, foi mencionado que o particionamento será criado utilizando o \textbf{EXT3} foi feito por conta do quota, é importante citar este tópico pois, este é um pré-requisito para a utilização do pacote. Veja abaixo os passos utilizados na configuração do quota. 
+
+Instalação do pacote
+\begin{lstlisting}
+# apt install quota
+\end{lstlisting}
+
+Após realizar a instalação, será necessário definir quais partições farão a utilização do \textbf{quota}, para isso é feito o acesso a \textbf{/etc/fstab}, dentro deste arquivo, é inserido nas opções da partição escolhida a opção \textbf{usrquota}, isso porque neste caso será feito o controle através de usuários. Aqui o quote será aplicado em todas as partições, para que o usuário seja limitado ao máximo no uso do disco.
+
+\includeImage{0.5}{imgs/3_configuracao_quota/1.png}{Arquivo de configuração de quota}
+
+As configurações de \textbf{quota} demonstradas acima, estão replicadas em todas as máquinas \textit{host} do cluster. 
+
+Após realizar as configurações acima será necessário reinicializar o sistema. Antes de continuar as configurações do \textbf{quotes}, veja a explicação de alguns parâmetros que serão utilizados:
+\begin{itemize}
+	\item \textbf{-a} - Checar todos os sistemas de arquivos em \textbf{/etc/fstab} que estão habilitados como 'automount';
+	\item \textbf{-u} - Checa \textbf{quotas} de usuários (Esta é uma opção padrão, ou seja, mesmo quando não especificada, será utilizada);
+	\item \textbf{-g} - Checa \textbf{quotas} de grupos;
+	\item \textbf{-v} - Mostra mais detalhes na saída do comando.
+\end{itemize}
+
+Com o conhecimento sobre cada um dos parâmetros utilizados no \textbf{quotas}, será agora realizado a continuação da configuração
+
+Para a continuação será necessário parar os serviços de \textbf{quotas}, isso porque no momento da inicialização ele é iniciado.
+\begin{lstlisting}
+# quotaoff -augv 
+\end{lstlisting}
+
+Com o serviço parado faça a verificação das \textbf{quotas} de disco, em todos os sistemas de arquivos que estão em \textbf{/etc/fstab}.
+\begin{lstlisting}
+# quotacheck -augv
+\end{lstlisting}
+
+Neste momento o serviço já está configurado, porém há um passo a ser realizado, adicionar os usuários que terão limites de uso, neste caso, será os usuários comuns, criados na seção de gerênciamento de usuários.
+
+A edição será inicialmente feita apenas para um usuário, neste caso o \textbf{user1}.
+\begin{lstlisting}
+# edquota agendador
+\end{lstlisting}
+
+Dentro deste arquivo insira os parâmetros como demonstrado abaixo.
+\includeImage{0.5}{imgs/3_configuracao_quota/2.png}{Configuração de \textbf{quota} para usuário}
+
+Na figura apresentada anteriormente, há alguns parâmetros que devem ser levados em consideração
+
+\begin{itemize}
+	\item \textbf{Filesystem} - Partição que terá a quota do usuário editada. No exemplo \textbf{/dev/sda1} e \textbf{/dev/sda5}
+    \item \textbf{blocks} - Número máximo de blocos (especificado em Kbytes) que o usuário possui atualmente;
+    \item \textbf{soft} - Restrição mínima de espaço em disco usado. No exemplo 25000 Kbytes (25 MB);
+    \item \textbf{hard} - Limite máximo aceitável de uso em disco para o usuário. O sistema de \textbf{quotas} nunca deixará este limite ser ultrapassado. No exemplo 50000 Kbytes (50 MB);
+    \item \textbf{inodes} - Número máximo de arquivos (inodes) que o usuário possui atualmente na partição especificada;
+    \item \textbf{soft} - Restrição mínima de número de arquivos que o usuário possui no disco;
+    \item \textbf{hard} - Restrição máxima de número de arquivos que o usuário.
+\end{itemize}
+
+Após inserir a regra para este usuário, será realizada uma cópia dessas configurações para os demais usuário, veja:
+
+\begin{lstlisting}
+# edquota -p agendador arquivador
+\end{lstlisting}
+
+As regras foram copiadas, agora será necessário fazer as verificações e ativar o serviço
+
+\begin{lstlisting}
+# quotacheck -augv
+\end{lstlisting}
+
+O comando acima, além de fazer a verificação, cria os arquivos \textbf{aquota.user} e \textbf{aquota.group}, que serão utilizados para criar as regras para usuários e grupos respectivamente.
+\begin{lstlisting}
+# quotaon -augv
+\end{lstlisting}
+
+Com isso as regras de \textbf{quotes} já estarão habilitadas e funcionando.
+
 % SSH e compartilhamento de rede
 \section{Configuração dos serviços de rede}
 
@@ -278,7 +342,7 @@ Neste etapa, será demonstrado o processo de configuração dos serviços de red
 A configuração do \textbf{ssh} no \textit{gateway} será realizada para que ele aceite conexões na porta \textbf{5678}. O primeiro passo será a instalação do pacote \textbf{ssh}.
 
 \begin{lstlisting}
-apt install ssh
+# apt install ssh
 \end{lstlisting}
 
 Após a instalação do pacote, será necessário realizar o acesso ao arquivo de configuração do \textbf{ssh}, este que fica no diretório \textbf{/etc/ssh/sshd\char`_config}, dentro deste arquivo será alterado os argumentos \textbf{Port} e \textbf{PermitRootLogin}, como demonstrado abaixo 
@@ -294,7 +358,7 @@ Da mesma forma que demonstrado no tópico anterior, o pacote \textbf{ssh} dever�
 Com o pacote instalado será necessário acessar o arquivo \textbf{/etc/ssh/sshd\char`_config}, e modificar apenas a linha de permissão de acesso do \textbf{root}. 
 
 Ao realizar a configuração a linha a ser alterada ficará como demonstrado abaixo:
-\includeImage{0.5}{imgs/4_configuracao_servicos_rede/1_host_1.png}{Configuração de SSH - Host}
+\includeImage{0.7}{imgs/4_configuracao_servicos_rede/1_host_1.png}{Configuração de SSH - Host}
 
 As máquinas \textbf{host} terão ainda uma opção para negar o acesso de todos os pedidos de conexão \textbf{ssh} que não venham de máquinas do cluster. Esta configuração será realizada no arquivo \textbf{/etc/hosts.allow}.
 
@@ -308,20 +372,20 @@ Dentro deste arquivo será declarado que qualquer conexão \textbf{ssh} que tenh
 
 \subsection{Configuração do compartilhamento de rede}
 
-Para finalizar o processo de configuração dos serviços de rede, será realizado o compartilhamento dos serviços de \textit{internet} do \textbf{gateway} e os \textbf{hosts}.
+Para finalizar o processo de configuração dos serviços de rede, será realizado o compartilhamento dos serviços de \textit{internet} do \textbf{gateway} para os \textbf{hosts}.
 
 O processo de configuração do compartilhamento do compartilhamento de rede pode ser visualizado abaixo
 
 \begin{lstlisting}
-sysctl -w net.ipv4.ip_forward=1
-sysctl -p 
-iptables -X
-iptables -F
-iptables -t nat -X
-iptables -t nat -F 
-iptables -I INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT 
-iptables -t nat -I POSTROUTING -o enp0s3 -j MA
+# sysctl -w net.ipv4.ip_forward=1
+# sysctl -p 
+# iptables -X
+# iptables -F
+# iptables -t nat -X
+# iptables -t nat -F 
+# iptables -I INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+# iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT 
+# iptables -t nat -I POSTROUTING -o enp0s3 -j MA
 \end{lstlisting} 
 
 Ao final da execução das linhas demonstradas acima, os \textbf{hosts} terão acesso aos serviços de \textit{internet} fornecidos pelo \textbf{gateway}.
