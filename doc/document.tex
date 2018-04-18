@@ -402,13 +402,65 @@ Ao final da execução das linhas demonstradas acima, os \textbf{hosts} terão a
 
 As configurações realizadas nos capítulos anteriores serão evidenciados neste, para demonstrar como o projeto funciona na prática.
 
+\subsection{Partições}
+
+Todas as máquinas particionadas:
+
+\includeImage{0.65}{imgs/testes/1-gateway_particoes.png}{Gateway particionado.}
+
+\includeImage{0.6}{imgs/testes/1-host1_particoes.png}{Host 1 particionado.}
+
+\includeImage{0.6}{imgs/testes/1-host2_particoes.png}{Host 2 particionado.}
+
+\subsection{Configuração de redes das máquinas}
+
+\includeImage{0.6}{imgs/testes/2-gateway_rede_interna_e_externa.png}{Rede externa e interna do Gateway.}
+
+\includeImage{0.6}{imgs/testes/2-host1_rede_interna.png}{Rede interna do Host 1.}
+
+\includeImage{0.6}{imgs/testes/2-host2_rede_interna.png}{Rede interna do Host 2.}
+
+\subsection{Conexões SSH}
+
+\includeImage{0.6}{imgs/testes/3-host1_consegue_dar_ssh_no_gateway.png}{Host 1 dando SSH no Gateway com sucesso.}
+
+\includeImage{0.6}{imgs/testes/3-host1_dando_ssh_no_host2_com_sucesso.png}{Host 1 dando SSH no Host 2 diretamente.}
+
+\includeImage{0.6}{imgs/testes/3-host1_dando_ssh_no_gateway_e_depois_no_host2.png}{Host 1 dando SSH no Host 2 pelo Gateway}
+
+\includeImage{0.6}{imgs/testes/3-dando_ssh_de_outra_maquina_no_gateway.png}{SSH de outra máquina não pertencente ao cluster, no Gateway.}
+
+\includeImage{0.6}{imgs/testes/3-dando_ssh_de_outra_maquina_no_host1_pelo_gateway.png}{SSH de outra máquina não pertencente ao cluster no Host 1, através do Gateway}
+
+\includeImage{0.7}{imgs/testes/3-host2_nao_consegue_dar_ssh_em_maquina_fora_do_cluster.png}{Host 2 tentando dar SSH em máquina fora do cluster sem sucesso.}
+
+\includeImage{0.6}{imgs/testes/5-root_tentando_dar_ssh_sem_sucesso.png}{Root tentando dar SSH sem sucesso.}
+
+\subsection{Poderes de root para o Administrador}
+
+\includeImage{0.6}{imgs/testes/6-admin_deletando_arquivo_do_agendador_com_sucesso.png}{Admin conseguindo apagar arquivo de outro usuário.}
+
+\includeImage{0.6}{imgs/testes/6-arquivador_tentando_apagar_o_arquivo_do_agendador_sem_sucesso.png}{Outro usuário tentando ter poder de root sem sucesso.}
+
+\includeImage{0.55}{imgs/testes/6-admin_nao_consegue_se_tornar_root.png}{Admin não consegue se tornar root.}
+
+\includeImage{0.55}{imgs/testes/6-admin_nao_consegue_mudar_senha_do_root.png}{Admin não consegue mudar senha do root.}
+
+\subsection{Quotas}
+
+\includeImage{0.55}{imgs/testes/6-agendador_baixando_arquivo_de_7mb_com_sucesso.png}{Usuário conseguindo baixar arquivo de 7mb.}
+
+\includeImage{0.55}{imgs/testes/6-agendador_baixando_arquivo_de_50_sem_sucesso.png}{Usuário não conseguindo baixar arquivo de 50mb.}
+
 \subsection{Grupos}
 
-Teste de administração de grupo:
+\includeImage{0.6}{imgs/testes/7-pastas_para_os_grupos_com_acesso_restrito.png}{Pastas com acesso restrito para os grupos.}
 
-\includeImage{0.8}{imgs/5_gerenciamento_grupos/permissao_restringida_apenas_para_os_grupos.png}{Gerenciamento de grupos}
+\includeImage{0.6}{imgs/testes/7-agendador_nao_conseguindo_escrever_na_pasta_de_arquivadores.png}{Agendador tentando acessar pasta de arquivador sem sucesso.}
 
-Neste exemplo o usuário user é adicionado ao grupo agendadores pelo usuário agendador. Um arquivo é criado por user e removido para testes de leitura, escrita e execução. Após isso o mesmo é removido do grupo agendadores e não consegue mais realizar acesso ao diretório agendadores.
+
+
+
 
 \chapter{Conclusão}
 
