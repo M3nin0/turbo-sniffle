@@ -395,8 +395,28 @@ O processo de configuração do compartilhamento de rede pode ser visualizado ab
 # iptables -t nat -I POSTROUTING -o enp0s3 -j MASQUERADE
 \end{lstlisting} 
 
+Abaixo, é exibido, uma pequena descrição de cada um dos comandos:
+\begin{itemize}
+	\item sysctl -w - Utilizado para escrever uma regra no sysctl;
+	\item sysctl -p - Carrega o arquivo onde a regra será salva (Por padrão /etc/sysctl.conf;
+	\item iptables -X - Exclui todas as chain non-builtin existentes, que estejam vazias;
+	\item iptables -F - Deleta todas as regras definidas na chain;
+	\item iptables -t nat -X - Exclui todas as chain non-builtin existentes, que estejam vazias, da tabela nat;
+	\item iptables -t nat -F - Deleta todas as regras definidas na chain, desta tabela;
+	\item iptables -I INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+		\begin{itemize}
+			\item RELATED: Significa que o pacote está começando uma nova conexão, mas está associado a uma conexão existente, como uma transferência de dados, por exemplo;
+			\item ESTABLISHED: Significa que o pacote está associado a uma conexão com pacotes em ambas direções.
+		\end{itemize}
+	\item iptables -t nat -I POSTROUTING -o enp0s3 -j MASQUERADE - Este é o comando que faz o roteamento funcionar, é aqui onde uma mascara é aplicada sobre o pacote recebido, e faz com que ele saia para a \textit{internet} com o endereço do gateway.
+\end{itemize}
+
+% -j, caso o pacote esteja dentro das características descritas pela regra, o -j irá dizer o que fazer com aquele pacote, no caso do NAT, as regras serão todas aceitas
+
 Ao final da execução das linhas demonstradas acima, os \textbf{hosts} terão acesso aos serviços de \textit{internet} fornecidos pelo \textbf{gateway}.
  
+ 
+
 % Demonstrar o funcionamento
 \section{Testes}
 
@@ -458,11 +478,8 @@ Todas as máquinas particionadas:
 
 \includeImage{0.6}{imgs/testes/7-agendador_nao_conseguindo_escrever_na_pasta_de_arquivadores.png}{Agendador tentando acessar pasta de arquivador sem sucesso.}
 
-
-
-
-
 \chapter{Conclusão}
 
+Com o desenvolvimento do projeto, conclui-se que, o sistema operacional Debian, oferece formas simples e robustas para o gerenciamento e controle de máquinas, grupos e usuários. O que permite a administradores de sistemas criar formas de garantir a integridade e disponibilidade dos servidores e seus serviços.
 
 \end{document}
